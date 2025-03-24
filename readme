@@ -1,0 +1,76 @@
+Zeynep Yetkin
+231101042
+
+
+# Calculator using Lex and Yacc
+
+Bu ödev, Lex ve Yacc kullanılarak yapılmış basit bir hesap makinesidir. 
+Ödev, toplama, çıkarma, çarpma, bölme ve bonus özellikler olarak: Floating-point sayı desteği ve Üstel (exponentiation) işlemleri (** veya ^) yapabilir. 
+bölme sırasında sıfıra bölme hatası tespit edilip kullanıcıya hata mesajı verilir. 
+Hesaplama sonucu tam sayı ise, ondalık kısım gösterilmeden ekrana basılmaktadır. 
+Floating point ise ondalıklı kısım gösterilir. White spaceleri de önemsemez.
+
+## Dosya Yapısı
+- calculator.l: Lex spesifikasyon dosyası. Girişteki sayıları, operatörleri ve parantezleri tanımlayarak token üretimini gerçekleştirir.
+- calculator.y:Yacc spesifikasyon dosyası. Aritmetik ifadelerin gramerini tanımlar, ilgili işlemleri gerçekleştirir ve hata kontrolü yapar.
+
+
+- Tek Veri Tipi Kullanımı:Hem tam sayı hem de floating-point işlemlerini desteklemek için tüm sayılar double tipinde işlenmektedir.
+- Operatör Önceliği: Yacc dosyasında tanımlı operatör öncelikleri sayesinde, hesaplamalar doğru sırayla yapılmaktadır. 
+Üstel operatör sağ-assosiyatif olarak, ve unary minus için %prec UMINUS kuralı eklenmiştir.
+- Hata Yönetimi:
+  - Bölme sırasında sıfıra bölme tespit edildiğinde, `yyerror` fonksiyonu çağrılarak hata mesajı yazdırılır.
+  - Hata durumunda, hesaplanan sonuç ekrana basılmaz.
+- Sonuç Formatlama:Hesaplama sonucu eğer tam sayı ise, ondalık kısmı görüntülenmez. Aksi halde floating-point formatında ekrana yazdırılır.
+
+Derleme ve Çalıştırma Adımları:
+
+1.Lex Kaynak Kodunun Oluşturulması:
+lex calculator.l
+2.Yacc Kaynak Kodunun Oluşturulması:
+yacc -d calculator.y
+3.Üretilen C Dosyalarının Derlenmesi:
+gcc lex.yy.c y.tab.c -o calculator -lm
+4. Programın Çalıştırılması:
+./calculator
+
+
+Yani bu sırayla çalıştırılır:
+lex calculator.l
+yacc -d calculator.y
+gcc lex.yy.c y.tab.c -o calculator -lm
+./calculator
+
+
+Program çalıştırıldığında kullanıcıdan aritmetik ifade girmesi istenir.
+İfadeler satır satır girilir; her ifade sonunda Enter tuşuna basılır.
+Programdan çıkmak için Ctrl+D basılması gerekir. (Mac bilgisayarda yazdığımdan)
+
+ Örnek Test Durumları
+
+Girdi: 3+4  
+Çıktı: Result: 7
+
+Girdi: (1+2)*4  
+Çıktı: Result: 12
+
+Girdi: ( 4 + 7 ) * 5  
+Çıktı: Result: 55
+
+Girdi: 3.5+2.7  
+Çıktı: Result: 6.2
+
+Girdi: p * 4
+Çıktı: 
+Unknown character: p
+Error: syntax error
+
+Girdi: 2**3 veya 2^3  
+Çıktı: Result: 8
+
+Girdi: 10/(5-5)  
+Çıktı:  
+Error: Division by zero
+(Bu durumda sonuç ekrana basılmaz.)
+
+
